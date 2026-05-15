@@ -1,7 +1,7 @@
 # Serverless Enterprise REST API Platform (IaC)
 
 ![Security Scan](https://img.shields.io/badge/security-tfsec%20passed-brightgreen?style=for-the-badge&logo=terraform)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=github-actions)
+![Build Status](https://github.com/SRJM941/Aegis-Serverless-Ops/actions/workflows/terraform-apply.yml/badge.svg)
 
 A production-grade, serverless architecture built on AWS using Terraform. This project demonstrates a robust CI/CD pipeline, hardened security through IaC scanning, and scalable cloud-native principles.
 

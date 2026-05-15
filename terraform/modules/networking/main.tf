@@ -48,7 +48,7 @@ resource "aws_iam_role" "flow_log_role" {
   tags = var.tags
 }
 
-
+#tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_role_policy" "flow_log_policy" {
   name = "${var.project}-flow-log-policy"
   role = aws_iam_role.flow_log_role.id

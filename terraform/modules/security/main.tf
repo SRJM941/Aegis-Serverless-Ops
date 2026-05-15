@@ -36,6 +36,3 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
   policy_arn = aws_iam_policy.dynamodb.arn
 }
 
-output "lambda_role_arn" {
-  value = aws_iam_role.lambda_exec.arn
-}

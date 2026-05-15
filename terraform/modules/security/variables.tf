@@ -1,10 +1,9 @@
 variable "project" {
-  description = "Project name used for naming resources"
   type        = string
+  description = "Project prefix name"
 }
 
-variable "tags" {
-  description = "Common tags to apply to all resources"
-  type        = map(string)
-  default     = {}
+variable "dynamodb_table_arn" {
+  type        = string
+  description = "Target DynamoDB Table ARN to clear wildcard constraints"
 }

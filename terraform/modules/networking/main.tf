@@ -48,25 +48,26 @@ resource "aws_iam_role" "flow_log_role" {
   tags = var.tags
 }
 
+
 resource "aws_iam_role_policy" "flow_log_policy" {
   name = "${var.project}-flow-log-policy"
   role = aws_iam_role.flow_log_role.id
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
+      Effect = "Allow"
       Action = [
-        "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents",
         "logs:DescribeLogGroups",
         "logs:DescribeLogStreams"
       ]
-      Effect   = "Allow"
-      Resource = "*"
+      Resource = "${aws_cloudwatch_log_group.flow_log.arn}:*" # Fix Result #2 Wildcard constraint
     }]
   })
 }
-
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "flow_log" {
   name              = "/aws/vpc/flow-log/${var.project}"
   retention_in_days = 7

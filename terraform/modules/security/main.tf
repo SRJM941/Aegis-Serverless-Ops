@@ -25,7 +25,7 @@ resource "aws_iam_policy" "dynamodb" {
   "Statement": [{
     "Effect": "Allow",
     "Action": ["dynamodb:PutItem","dynamodb:GetItem","dynamodb:Scan"],
-    "Resource": "*"
+    "Resource": "${var.dynamodb_table_arn}"
   }]
 }
 EOF
@@ -34,4 +34,8 @@ EOF
 resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.dynamodb.arn
+}
+
+output "lambda_role_arn" {
+  value = aws_iam_role.lambda_exec.arn
 }

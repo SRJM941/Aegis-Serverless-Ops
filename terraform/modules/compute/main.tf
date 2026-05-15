@@ -8,6 +8,16 @@ resource "aws_dynamodb_table" "items" {
     type = "S"
   }
 
+  # TFSEC FIX: Encryption at rest enabled
+  server_side_encryption {
+    enabled = true
+  }
+
+  # TFSEC FIX: Point-in-time recovery enabled
+  point_in_time_recovery {
+    enabled = true
+  }
+
   lifecycle {
     prevent_destroy = true  # protection
   }
@@ -23,6 +33,11 @@ resource "aws_lambda_function" "api" {
   runtime          = "python3.9"
   source_code_hash = filebase64sha256("${path.module}/lambda_code.zip")
 
+  # TFSEC FIX: Active tracing via X-Ray enabled
+  tracing_config {
+    mode = "Active"
+  }
+
   lifecycle {
     ignore_changes = [source_code_hash]
   }
@@ -33,10 +48,30 @@ resource "aws_apigatewayv2_api" "http" {
   protocol_type = "HTTP"
 }
 
+# TFSEC FIX: Dedicated Log Group for API Gateway Access Logs
+resource "aws_cloudwatch_log_group" "api_gw_logs" {
+  name              = "/aws/apigateway/${var.project}-access-logs"
+  retention_in_days = 7
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http.id
   name        = "$default"
   auto_deploy = true
+
+  # TFSEC FIX: Access Logging Block Configured
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gw_logs.arn
+    format          = jsonencode({
+      requestId      = "$context.requestId"
+      ip             = "$context.identity.sourceIp"
+      requestTime    = "$context.requestTime"
+      httpMethod     = "$context.httpMethod"
+      routeKey       = "$context.routeKey"
+      status         = "$context.status"
+      responseLength = "$context.responseLength"
+    })
+  }
 }
 
 resource "aws_apigatewayv2_integration" "lambda" {

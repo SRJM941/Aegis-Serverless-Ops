@@ -26,13 +26,14 @@ module "networking" {
   azs      = data.aws_availability_zones.available.names
 }
 
-module "security" {
-  source  = "./modules/security"
-  project = var.project_name
-}
-
 module "compute" {
   source          = "./modules/compute"
   project         = var.project_name
   lambda_role_arn = module.security.lambda_role_arn
+}
+
+module "security" {
+  source             = "./modules/security"
+  project            = var.project_name
+  dynamodb_table_arn = module.compute.dynamodb_table_arn
 }

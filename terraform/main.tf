@@ -1,13 +1,24 @@
+# 1. Yeh hai terraform block jo provider version constraint set karta hai
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0" # Lock tools to AWS Provider version 5.x
+    }
+  }
+}
+
+# 2. AWS Provider block configuration
 provider "aws" {
   region = var.aws_region
 }
 
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
+# 3. Required Data blocks (Only keeping the used one)
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
+# 4. Infrastructure Modules
 module "networking" {
   source   = "./modules/networking"
   project  = var.project_name
@@ -18,8 +29,6 @@ module "networking" {
 module "security" {
   source  = "./modules/security"
   project = var.project_name
-  # Optionally pass tags:
-  # tags = { Project = var.project_name }
 }
 
 module "compute" {

@@ -25,14 +25,14 @@
 #         working-directory: terraform
 #         run: terraform apply -auto-approve
 
-name: Terraform Plan
+name: Terraform Apply
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 jobs:
-  plan:
+  apply:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -44,32 +44,16 @@ jobs:
         with:
           terraform_version: 1.6
 
-      # OIDC Connection to AWS using Mumbai Region
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-south-1
 
-      - name: Lint with tflint
-        uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: v0.54.0
-      - run: tflint --chdir=terraform
-
-      - name: Security scan with tfsec
-        uses: aquasecurity/tfsec-action@v1.0.3
-        with:
-          working_directory: terraform
-
       - name: Terraform Init
         working-directory: terraform
         run: terraform init
 
-      - name: Terraform Validate
+      - name: Terraform Apply
         working-directory: terraform
-        run: terraform validate
-
-      - name: Terraform Plan
-        working-directory: terraform
-        run: terraform plan -out=tfplan
+        run: terraform apply -auto-approve

@@ -56,4 +56,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform
+        env:
+          TF_VAR_project_name: "rahul-api"
         run: terraform apply -auto-approve

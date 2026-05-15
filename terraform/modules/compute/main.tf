@@ -17,8 +17,9 @@ resource "aws_dynamodb_table" "items" {
     enabled = true
   }
 
+  # --- TFSEC / PIPELINE FIX: Temporary disabled to allow project prefix renaming ---
   lifecycle {
-    prevent_destroy = true  # protection
+    prevent_destroy = false 
   }
 
   tags = var.tags

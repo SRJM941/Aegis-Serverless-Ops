@@ -22,7 +22,7 @@ resource "aws_dynamodb_table" "items" {
     prevent_destroy = false 
   }
 
-  tags = var.tags
+  tags = merge(var.tags, { "PipelineTrigger" = "Manual-Sync-01" })
 }
 
 resource "aws_lambda_function" "api" {
